@@ -194,7 +194,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Importing a few necessary libraries</span>
@@ -260,7 +260,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Number of houses in the dataset</span>
@@ -389,9 +389,9 @@ PTRATIO: pupil-teacher ratio by town</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>RM: 5.609
-DIS: 1.385
-PTRATIO: 20.2</p>
+<p>RM: 5.609</p>
+<p>DIS: 1.385</p>
+<p>PTRATIO: 20.2</p>
 
 </div>
 </div>
@@ -424,7 +424,7 @@ Ensure that you have executed the code block once you are done. You'll know if t
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Put any import statements you need for this code block here</span>
@@ -508,7 +508,7 @@ Ensure that you have executed the code block once you are done. You'll know if t
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Put any import statements you need for this code block here</span>
@@ -595,7 +595,7 @@ Ensure that you have executed the code block once you are done. You'll know if t
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Put any import statements you need for this code block</span>
@@ -686,7 +686,7 @@ Ensure that you have executed the code block once you are done. You'll know if t
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> Cross validation is a technique to repeatedly partitition (by resampling) the given dataset into training/testing subsets and using the average results of model performance on testing subsets as a measure of model performance on the given dataset. When we use grid-search, we need to significantly increase the size of our data as there is higher likelihood of seeing a model with low error due to chance (since we are testing many models). Since our data size is limited by real-world constrains, we can use cross-validation to "simulate" different data sets.</p>
+<p><strong>Answer: </strong> Cross validation is a technique to repeatedly partitition (by resampling) the given dataset into training/testing subsets and using the average results of model performance on testing subsets as a measure of model performance on the given dataset. When we use grid-search, we need to significantly increase the size of our data as there is higher likelihood of seeing a model with low error due to random chance (since we are testing many fits for our model, we may accidently overfit). Since our data size is limited by real-world constraints, we can use cross-validation to "simulate" different data sets.</p>
 
 </div>
 </div>
@@ -1870,7 +1870,9 @@ YII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> I'd select max depth of 6 for the model. This model has a good bias-variance trade-off (the testing error is low and is only slightly higher than training error). As the size of the training set increases, the training error increase, however testing error decreases.</p>
+<p><strong>Answer: </strong> Let's select max_depth = 6 learning curve. As the size of training set inceases, the training error goes up slowly. For say only 6 data points, the training model would be a perfect fit. As number of datapoints increase, the model can't perfectly fit all the points and the error goes up.</p>
+<p>The testing error however decreases as the size of training set increases. As the model sees more data in training, it can better fit further real world examples (as represented by data in testing set).</p>
+<p>This model is an example of a good bias-variance tradeoff model as the testing and training error are close to each AND testing error goes down as size of training data goes up.</p>
 
 </div>
 </div>
@@ -2288,7 +2290,8 @@ CCGExvsf+HVmFQWcFyUAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> I think max depth of 3 best generalizes the dataset as the training and testing error are the same. These errors are also same for max depth of 1 and 2, but the value of the error itself is higher.</p>
+<p><strong>Answer: </strong> As max_depth increases, training error goes down monotonically since we are allowing a more complex tree to be fitted to limited data. The testing error initially goes down (as we approach from an under-fitted model to appropriate model) but then starts increasing as the model goes from appropriate fit to over-fit.</p>
+<p>I think max depth of 6 (or 7) best generalizes the dataset. This model has a good bias-variance trade-off (the testing error is low and is only slightly higher than training error). Based on the learning curves, as the size of the training set increases, the training error increase, however testing error decreases.At max_depth = 6, the testing error is lowest (along with max_depth = 7). While testing error is slightly higher than training error, the different is not very big. I'd select max_depth=6 for my parameter as the resulting tree is simpler than max_depth = 7 (and if two models perform approximately the same, we should pick simpler model).</p>
 
 </div>
 </div>
@@ -2316,7 +2319,7 @@ CCGExvsf+HVmFQWcFyUAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="s">&quot;Final model optimal parameters:&quot;</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">best_params_</span>
@@ -2364,7 +2367,7 @@ CCGExvsf+HVmFQWcFyUAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">sale_price</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">CLIENT_FEATURES</span><span class="p">)</span>
@@ -2395,7 +2398,7 @@ CCGExvsf+HVmFQWcFyUAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> My model predicts the value of client's home at $21,630. It is very close to both mean and median prices of the dataset.</p>
+<p><strong>Answer: </strong> My model predicts the value of client's home at $21,630. It is within 1 std deviation of both mean and median prices of the dataset.</p>
 
 </div>
 </div>
@@ -2415,7 +2418,7 @@ CCGExvsf+HVmFQWcFyUAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> No. I would not use this mode to predict the selling price of future clients' homes in Greater Boston area due to very high MSE of the model. The MSE of this model for testing dataset is almost 20 which is twice as high as the standard deviation of the original dataset. This seems to be suggest I might just as well predict the mean house price in my data set to be the selling price and still be better than this model.</p>
+<p><strong>Answer: </strong> No. I would not use this mode to predict the selling price of future clients' homes in Greater Boston area due to very high MSE of the model. The MSE of this model for testing dataset is almost 20 which is twice as high as the standard deviation of the original dataset. This seems to be suggest I might just as well predict the mean house price in my data set to be the selling price and still do reasonably well.</p>
 
 </div>
 </div>
