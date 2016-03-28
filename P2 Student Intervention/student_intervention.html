@@ -886,11 +886,13 @@ F1 score for test set: 0.776978417266
 <span class="sd">    set, these are not primary concerns</span>
 <span class="sd">2) Very strong performance: Even without fine tuning, the SVC easily outperforms Gaussian NB and Decision Trees.</span>
 
-<span class="sd">Linear SVC uses training data to discover the hyper-plane which optimizes the trade-off between, a) Maximizing the margin between</span>
-<span class="sd">the data belonging to the two classes (pass/fail) and, b) ensuring that all data points belong to their respective class lie on </span>
-<span class="sd">the correct side of the margin. </span>
 
-<span class="sd">Based on the vector w normal to the hyper-plane discovered from training data, the classification of un-seen data is simply sign</span>
+<span class="sd">To start, the model assigns a sign +/- to each of the two classes of data (Pass/Fail).</span>
+
+<span class="sd">Linear SVC uses training data to discover the hyper-plane which optimizes the trade-off between, a) Maximizing the margin between</span>
+<span class="sd">the data belonging to the two classes (pass/fail) and, b) ensuring that all data points lie on the correct side of the margin. </span>
+
+<span class="sd">Based on the vector w, normal to the hyper-plane, discovered from training data, the classification of un-seen data is simply sign</span>
 <span class="sd">of (dot product of w and x + b) where x is the unseen data and b is the parameter which determines the offset of the hyper-plane</span>
 <span class="sd">from origin (the offset is b/||w||).</span>
 
