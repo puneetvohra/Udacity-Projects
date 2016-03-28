@@ -114,29 +114,28 @@ print "F1 score for test set: {}".format(test_f1_score)
 
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import f1_score, make_scorer
-def fit_model(X, y):
-    """ Tunes a decision tree regressor model using GridSearchCV on the input data X 
+def fit_model(clf, X, y):
+    """ Tunes a classification model using GridSearchCV on the input data X 
         and target labels y and returns this optimal model. """
 
     
-    regressor = LinearSVC()
-
-    # Set up the parameters we wish to tune
+     # Set up the parameters we wish to tune
     parameters = {'C':np.logspace(-6, -1, 10)}
 
     # Make an appropriate scoring function
     scoring_function = make_scorer(f1_score,greater_is_better = True)
 
     # Make the GridSearchCV object
-    reg = GridSearchCV(regressor,param_grid = parameters, scoring=scoring_function)
+    best_clf = GridSearchCV(clf,param_grid = parameters, scoring=scoring_function)
 
     # Fit the learner to the dataset to obtain the optimal model with tuned parameters
-    reg.fit(X, y)
+    best_clf.fit(X, y)
 
     # Return the optimal model
-    return reg
+    return best_clf
 
-print "Final model optimal parameters:", reg.best_params_
+best_clf = fit_model(clf_svm, X_train, y_train)
+print "Final model optimal parameters:", best_clf.best_params_
 
 
 #Choose 3 supervised learning models that are available in scikit-learn, and appropriate for this problem. For each model:
@@ -152,11 +151,13 @@ print "Final model optimal parameters:", reg.best_params_
 #What is the model's final F1 score?
 
 '''We choose the Gaussian Naive Bayes Classifier based on three factors:
-1) Reasonable training time (faster than Support Vector machines)
-2) Very fast prediction time
-3) Easy to understand and explain
+1) Strong F1 score on test data
+2) Reasonable training time (faster than Support Vector machines)
+3) Very fast prediction time
+4) Easy to understand and explain
 
-Naiver Bayes prediction model predicts the most likely classification given the input data. 
+Naiver Bayes prediction model predicts the most likely classification of student (Pass/Fail)
+given the input data. 
 
 We first train the model using the naive bayes assumption: we assume each feature is independent of 
 every other feature given the classification of training data.
