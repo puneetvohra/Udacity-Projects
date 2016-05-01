@@ -503,9 +503,70 @@ Test set: 95 samples
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Answer: Our data lends itself to several types of classifiers due to its characteristics:</p>
+<p>1) The data is fully labeled i.e. we know exactly the meaning and interpretation of each observations and the features associated 
+with those observations.</p>
+<p>2) We have a simple two-class classification problem (instead of a multi-class classfication) which allows use of regular 2-class 
+SVCs.</p>
+<p>3) We have very small data set (few hundred observations) which also allow for resource intensive training algorithm (such as SVCs)</p>
+<p>Based on data characteristics, we choose 3 potential models: Decision Tree Classifier, SVM Classifier, Gaussian Naive Bayes Classifier.</p>
+<p>Below are the pros and cons of using each model.</p>
+<table>
+<thead><tr>
+<th>Classifier</th>
+<th>Performance</th>
+<th>Speed</th>
+<th>Ease of modeling</th>
+<th>Ease of Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decision Tree</td>
+<td>Poor</td>
+<td>Fast</td>
+<td>Difficult</td>
+<td>Easy</td>
+</tr>
+<tr>
+<td>Linear SVM</td>
+<td>Good</td>
+<td>Slow</td>
+<td>Medium</td>
+<td>Difficult</td>
+</tr>
+<tr>
+<td>Gaussian Naive Bayes</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Easy</td>
+<td>Medium</td>
+</tr>
+</tbody>
+</table>
+<p>Reasons for choosing each model:</p>
+<p>1) Since there is no reason to assume that our data is linearly separable, Gaussian NB is a general classification algorithm to
+use. Gaussian NB, being a non-parametric model, is also the easiest model to use as it requires no fine tuning. It is also an 
+easy model to explain.</p>
+<p>2) Decision Tree is probably the easiest model to explain. However, it suffers from poor performance and has many
+parameters that require fine tuning for an accurate model. It is easy to overfit/underfit decision tree models due to the number
+of parameters. A decision tree also creates linear divisions in the given data for the classification (which is an unfounded
+assumption in our case).</p>
+<p>3) Linear SVMs have the best performance among selected models and have only 1 significant parameter (relative cost of incorrect
+classification, 'C') to fine tune, making them easy to use. Unfortunately, the results of SVCs are very difficult to interpret 
+and/or explain to laypersons since the model searches for an optimal hyperplane in a multi-dimensional space.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Train a model</span>
@@ -522,33 +583,7 @@ Test set: 95 samples
 <span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">LinearSVC</span>
 <span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd"> We chose 3 potential models: Decision Tree Classifier, SVM Classifier, Gaussian Naive Bayes Classifier. </span>
-<span class="sd"> </span>
-<span class="sd"> Below are the pros and cons of using each model.</span>
-<span class="sd">| Classifier           | Performance | Speed     | Ease of modeling | Ease of Explanation |</span>
-<span class="sd">|----------------------|-------------|-----------|------------------|---------------------|</span>
-<span class="sd">| Decision Tree        | Poor        | Fast      | Difficult        | Easy                |</span>
-<span class="sd">| Linear SVM           | Good        | Slow      | Medium           | Difficult           |</span>
-<span class="sd">| Gaussian Naive Bayes | Medium      | Medium    | Easy             | Medium              |</span>
 
-
-<span class="sd">Reasons for choosing each model:</span>
-<span class="sd">1) Gaussian NB, being a non-parametric model, is the easiest model to use as it requires no fine tuning. It can also be trained</span>
-<span class="sd">quickly (both developer time and CPU time). It is also an easy model to explain. Finally, since there is no reason to assume that</span>
-<span class="sd">our data is linearly separable, Gaussian NB is also the most general algorithm to use.</span>
-
-<span class="sd">2) Decision Tree is probably the easiest model to explain. However, it suffers from poor performance and has many</span>
-<span class="sd">parameters that require fine tuning for an accurate model. It is easy to overfit/underfit decision tree models due to the number</span>
-<span class="sd">of parameters. A decision tree also creates linear divisions in the given data for the classification (which is an unfounded</span>
-<span class="sd">assumption in our case).</span>
-
-<span class="sd">3) Linear SVMs have the best performance among selected models and have only 1 significant parameter (relative cost of incorrect</span>
-<span class="sd">classification, &#39;C&#39;) to fine tune, making them easy to use. Unfortunately, SVMs are difficult to explain to a lay person as</span>
-<span class="sd">they involve transforming the given data before classifying them. SVMs are also preferred over other classifiers (such as logistic</span>
-<span class="sd">regression) for data involving high number of features, which is not the case here.</span>
-
-<span class="sd">&#39;&#39;&#39;</span>
 <span class="n">clf_dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
 <span class="n">clf_svm</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">()</span>
 <span class="n">clf_nb</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
@@ -941,7 +976,7 @@ F1 score for test set: 0.763358778626
 <table>
 <thead><tr>
 <th>Classifier</th>
-<th>Performance</th>
+<th>F1 Test Score</th>
 <th>Speed</th>
 <th>Other Issues</th>
 </tr>
@@ -961,7 +996,7 @@ F1 score for test set: 0.763358778626
 </tr>
 <tr>
 <td>Gaussian Naive Bayes</td>
-<td>Medium</td>
+<td>Good</td>
 <td>Fast</td>
 <td>None</td>
 </tr>
@@ -971,25 +1006,24 @@ F1 score for test set: 0.763358778626
 It has strong performance, doesn't suffer from the risk of being over fitted and can be trained very quickly. It also has the benefit of being easy to explain.</p>
 <p>The model makes a prediction for a given student as follows:</p>
 <ul>
-<li><p>For each possible classification C<sub>i</sub> (In our case, the classifications are Pass/Fail), the model calculates the probability that the given data belongs to that classification, P<sub>i</sub>. The classification (pass/fail) predicted for a new student is simply one with highest probability. Specifically, in our case the model generates two probabilities: P<sub>F</sub>, the predicted probability that the given student would fail and P<sub>P</sub>, the predicted probability that the given student would pass. The predicted outcome (Pass/Fail) is the one which has greater probability.</p>
-</li>
-<li><p>To calculate P<sub>i</sub> (In our case, P<sub>P</sub> and P<sub>F</sub>), the model uses Bayes rule, i.e. the probability of classification given some feature (features are list of data that is known for a student, e.g. 'distance from home', 'Mother's job' etc.) values can be derived from:</p>
-<ul>
-<li>probability of feature values given the classification; and</li>
-<li>probability of classification itself</li>
+<li>For each possible classification (In our case, the classifications are Pass/Fail), the model calculates the probability that the given data belongs to that classification (In our case, the model calculates two probabilities, probability of Passing and probability of Failing). The classification (pass/fail) predicted for a new student is simply one with highest probability. </li>
 </ul>
-</li>
-</ul>
+<p>As an example, let's consider how the probability of passing is calculated:</p>
+<p>The model uses Bayes rule, i.e. the probability of classification given some feature (features are list of data that is known for a student, e.g. 'distance from home', 'Mother's job' etc.) values can be derived from:</p>
+
+<pre><code>- probability of feature values given the classification; and
+- probability of classification itself
+
+</code></pre>
 <p>e.g. if our only available feature was whether or not the Guardian was mother or not, then predicted probability of a student with guardian mother passing equals [probability of having a guardian mother for a passing student (a) x probability of any student passing (b) / probability of any student having a guarding mother (c)]</p>
 <p>All 3 probabilities, (a), (b) and (c) can be readily seen from the training data.</p>
 <p>The model makes two simplifying assumptions:</p>
 
 <pre><code>- For continuous features (non-nominal), the model assumes underlying distribution is Gaussian. 
-- The model assumes all features are independent of each other, i.e. P(X&lt;sub&gt;j&lt;/sub&gt;X&lt;sub&gt;k&lt;/sub&gt;)= P(X&lt;sub&gt;j&lt;/sub&gt;) x
-  P(X&lt;sub&gt;k&lt;/sub&gt;) for all X&lt;sub&gt;j&lt;/sub&gt;, X&lt;sub&gt;k&lt;/sub&gt; features in the model.
+- The model assumes all features are independent of each other, i.e. probability of two features values occuring together (e.g. 'Guardian Mother' and 'Male Sex') is same as product of probabilities of the feature values occuring independently, i.e. probability of 'Guardian Mother' x probability of 'Male Sex'
 
 </code></pre>
-<p>The first assumption only comes into picture for features which are not labels (ordered) or classifications themselves. Consider 'absences' which is a number greater than 0. To calculate probability (a), i.e. probability of a feature value given the classification (say Pass), we first calculate the mean and variance of 'absences' feature for for all the students who Passed. Then we can find the conditional probability mentioned above by using the parameterized Normal distribution equation (or can be looked up in z-tables).</p>
+<p>The first assumption only comes into picture for features which are not labels (ordered) or classifications themselves. Consider 'absences' which is a number greater than 0. To calculate probability (a), i.e. probability of a feature value given that the student passed, we first calculate the mean and variance of 'absences' feature for for all the students who Passed. Then we can find the conditional probability mentioned above by using the parameterized Normal distribution equation (or it can be looked up in z-tables).</p>
 <p>The second assumption can easily seen to be misleading: e.g. 'health' and 'absences' are likely not independent features. Practically, this means one of those features may affect the other. e.g. students with better health are likely to have fewer absences. However, despite this limitation, the model performs very well with real life data and is able to predict with high accuracy and precision.</p>
 <p><b> Since Gaussian NB is a non-parametric model, it can't be further fine tuned. To explore fine-tuning, we select a Linear SVC model. </b></p>
 <p>1) Reasonable Training and Prediction times: While SVCs are not as fast as Gaussian NBs and Decision Trees, due to small training set, these are not primary concerns.
