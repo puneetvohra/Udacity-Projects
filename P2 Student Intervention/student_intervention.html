@@ -550,16 +550,47 @@ SVCs.</p>
 </tbody>
 </table>
 <p>Reasons for choosing each model:</p>
-<p>1) Since there is no reason to assume that our data is linearly separable, Gaussian NB is a general classification algorithm to
-use. Gaussian NB, being a non-parametric model, is also the easiest model to use as it requires no fine tuning. It is also an 
-easy model to explain.</p>
-<p>2) Decision Tree is probably the easiest model to explain. However, it suffers from poor performance and has many
-parameters that require fine tuning for an accurate model. It is easy to overfit/underfit decision tree models due to the number
-of parameters. A decision tree also creates linear divisions in the given data for the classification (which is an unfounded
-assumption in our case).</p>
-<p>3) Linear SVMs have the best performance among selected models and have only 1 significant parameter (relative cost of incorrect
-classification, 'C') to fine tune, making them easy to use. Unfortunately, the results of SVCs are very difficult to interpret 
-and/or explain to laypersons since the model searches for an optimal hyperplane in a multi-dimensional space.</p>
+<p>1) Decision Trees:</p>
+
+<pre><code>Pros:
+    - Easy to explain: The model output can be explained with the help of a graph or simple set of 1 line rules.
+    - Very fast to train
+
+Cons:
+    - Overfitting issues: The model has many parameters which require fine tuning. This makes the model prone to over-fitting.
+    - Linear separation: The model creates linear boundaries of classifications which may not be appropriate in our case
+
+Why chosen:
+    - Fully labeled data 
+    - Need for whitebox model to explain (and interpret for) the board
+
+</code></pre>
+<p>2) Gaussian NB:</p>
+
+<pre><code>Pros:
+    - Easy to explain: Broadly, the model can be explained as a simple application of Baye's theorem combined with some assumptions about data distribution and feature dependences.
+    - Easy to model: The model has no parameters, hence requires no fine tuning. It is therefore, also less prone to                   overfitting.
+
+Cons:
+    - Makes assumptions (such as independence of features and Gaussian distribution of non-nominal features) which may lead to a bad model.
+
+Why chosen:
+    - Good compromise between easy to explain/training speed
+</code></pre>
+<p>3) Linear SVCs:</p>
+
+<pre><code>Pros:
+    - Good performance - In general, Linear SVC are known to perform strongly for classification problems
+    - Few fitting issues - Since the model has only 1 parameter, it is not prone to over-fitting
+
+Cons:
+    - Slow speed - SVCs are really slow to train
+    - Difficult to interpret
+    - Only directly applicable to two-class tasks.
+
+Why chosen:
+    - The slow speed is not a very big concern since our data size is tiny (few hundred observations)
+    - Since our classification type is binary, SVCs can be directly applied.</code></pre>
 
 </div>
 </div>
@@ -972,50 +1003,54 @@ F1 score for test set: 0.763358778626
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Comparison of models:
- Below are the pros and cons of using each model.</p>
+ Let's consider the best F1-Test score (i.e. with training size = 300 observations)</p>
 <table>
 <thead><tr>
 <th>Classifier</th>
 <th>F1 Test Score</th>
-<th>Speed</th>
+<th>Train Time</th>
 <th>Other Issues</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Decision Tree</td>
-<td>Poor</td>
-<td>Fast</td>
+<td>0.63</td>
+<td>0.002 s</td>
 <td>Overfitted</td>
 </tr>
 <tr>
-<td>Linear SVM</td>
-<td>Good</td>
-<td>Slow</td>
+<td>Linear SVC</td>
+<td>0.79</td>
+<td>0.001 s</td>
 <td>Difficult to explain</td>
 </tr>
 <tr>
 <td>Gaussian Naive Bayes</td>
-<td>Good</td>
-<td>Fast</td>
+<td>0.76</td>
+<td>0.030 s</td>
 <td>None</td>
 </tr>
 </tbody>
 </table>
+<p>Linear SVC and Gaussian NB both have high test scores (as compared to Decision Tree). However, as expected, SVC takes much longer to train. The Linear SVC score could probably be improved a little bit more by fine tuning the 'cost' parameter, but 
+it will remain a black box model.</p>
 <p>At this stage, I'd recommend the Gaussian Naive Bayes model to the board of supervisors.
 It has strong performance, doesn't suffer from the risk of being over fitted and can be trained very quickly. It also has the benefit of being easy to explain.</p>
-<p>The model makes a prediction for a given student as follows:</p>
+<p>The model makes prediction for a given student as follows:</p>
 <ul>
-<li>For each possible classification (In our case, the classifications are Pass/Fail), the model calculates the probability that the given data belongs to that classification (In our case, the model calculates two probabilities, probability of Passing and probability of Failing). The classification (pass/fail) predicted for a new student is simply one with highest probability. </li>
+<li>For each possible classification, the model calculates the probability that a new observation belongs to that classification. In our case, there are two classifications 'Pass' and 'Fail' and the model calculates two probabilities, probability of passing and probability of failing. The classification (pass/fail) predicted for a new student is simply one with highest probability. </li>
 </ul>
-<p>As an example, let's consider how the probability of passing is calculated:</p>
-<p>The model uses Bayes rule, i.e. the probability of classification given some feature (features are list of data that is known for a student, e.g. 'distance from home', 'Mother's job' etc.) values can be derived from:</p>
+<p>The model uses Bayes rule, i.e. the probability of classification given some feature (features are list of data that is known for a student, e.g. 'distance from home', 'Mother's job', 'Guardian' etc.) values can be derived from:</p>
 
 <pre><code>- probability of feature values given the classification; and
 - probability of classification itself
 
+
 </code></pre>
-<p>e.g. if our only available feature was whether or not the Guardian was mother or not, then predicted probability of a student with guardian mother passing equals [probability of having a guardian mother for a passing student (a) x probability of any student passing (b) / probability of any student having a guarding mother (c)]</p>
+<p>As an example, let's consider how the probability of passing for a new student is calculated. In our example, we will consider a much simpler dataset where the only available feature was whether or not the Guardian was mother or not. Say, we see a new student where the guardian is mother and we trying to predict whether or not this student will pass.</p>
+<p>The model will calculate two probabilities: Probability of passing given the guardian is mother and the probability of failing given the guardian is mother. Let's consider the first case only using Baye's theorem:</p>
+<p>Predicted probability of a student with guardian mother passing equals [probability of having a guardian mother for a passing student (a) x probability of any student passing (b) / probability of any student having a guarding mother (c)]</p>
 <p>All 3 probabilities, (a), (b) and (c) can be readily seen from the training data.</p>
 <p>The model makes two simplifying assumptions:</p>
 
