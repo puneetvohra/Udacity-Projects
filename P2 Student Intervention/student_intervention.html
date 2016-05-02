@@ -1037,36 +1037,28 @@ F1 score for test set: 0.763358778626
 it will remain a black box model.</p>
 <p>At this stage, I'd recommend the Gaussian Naive Bayes model to the board of supervisors.
 It has strong performance, doesn't suffer from the risk of being over fitted and can be trained very quickly. It also has the benefit of being easy to explain.</p>
-<p>The model makes prediction for a given student as follows:</p>
-<ul>
-<li>For each possible classification, the model calculates the probability that a new observation belongs to that classification. In our case, there are two classifications 'Pass' and 'Fail' and the model calculates two probabilities, probability of passing and probability of failing. The classification (pass/fail) predicted for a new student is simply one with highest probability. </li>
-</ul>
-<p>The model uses Bayes rule, i.e. the probability of classification given some feature (features are list of data that is known for a student, e.g. 'distance from home', 'Mother's job', 'Guardian' etc.) values can be derived from:</p>
+<p><b> How does the model work? </b></p>
+<p>Gaussian NB model calculates two probabilities:</p>
+<p>a)    Probability of student passing</p>
+<p>b)    Probability of student failing</p>
+<p>The prediction (Pass or Fail) is the one which has higher probability.</p>
+<p>Let us understand how it calculates one of those probabilities, say probability of passing. The other probability is calculated in exactly the same way but with different values. Let us consider a much simpler version of our data where the only piece of information available to us was whether or not the guardian of the student was mother or not.</p>
+<p>Say, in our historical data we see that a passing student had a guardian mother 40% of the times (a). Furthermore, we notice that on average a student passed 60% of the times (b) and on average a student had guardian mother 50% of the times (c).</p>
+<p>We now see a new student who has a guardian mother and the model is trying to predict the probability of this student passing. This probability is equal to {probability of a passing student having a guardian mother (a) x probability of a student passing (b)/ probability of a student having a guardian mother (c)}</p>
+<p>Various parts of the calculation are intuitive: probability of a student with guardian mother passing should be high if, in general, the probability of a student passing is high. Similarly, probability of a student with guardian mother passing should be high if other passing students tend to have guardian mothers. We need to adjust this with the probability of having a guardian mother.</p>
+<p>Hence, in our made up example, the model would calculate the probability of the student with guardian mother passing as 0.4x0.6/0.5 = 48%. Similarly, it will also calculate the probability of student failing which in our case is simply 1-48% = 52%.  Since the probability of failing is higher than probability of passing, the model predicts that student will fail.</p>
+<p><b>This is Bayes model in a simplified version.</b></p>
+<p>The model makes two further simplifying assumptions which give it the name ‘Gaussian Naïve Bayes’:</p>
 
-<pre><code>- probability of feature values given the classification; and
-- probability of classification itself
-
-
-</code></pre>
-<p>As an example, let's consider how the probability of passing for a new student is calculated. In our example, we will consider a much simpler dataset where the only available feature was whether or not the Guardian was mother or not. Say, we see a new student where the guardian is mother and we trying to predict whether or not this student will pass.</p>
-<p>The model will calculate two probabilities: Probability of passing given the guardian is mother and the probability of failing given the guardian is mother. Let's consider the first case only using Baye's theorem:</p>
-<p>Predicted probability of a student with guardian mother passing equals [probability of having a guardian mother for a passing student (a) x probability of any student passing (b) / probability of any student having a guarding mother (c)]</p>
-<p>All 3 probabilities, (a), (b) and (c) can be readily seen from the training data.</p>
-<p>The model makes two simplifying assumptions:</p>
-
-<pre><code>- For continuous features (non-nominal), the model assumes underlying distribution is Gaussian. 
-- The model assumes all features are independent of each other, i.e. probability of two features values occuring together (e.g. 'Guardian Mother' and 'Male Sex') is same as product of probabilities of the feature values occuring independently, i.e. probability of 'Guardian Mother' x probability of 'Male Sex'
+<pre><code>- For continuous features (non-nominal), the model assumes underlying distribution is Gaussian. Features are type of data  available to us. In our data, e.g. number of absences is a type of non-nominal feature, which the model will assume is normally distributed.
+- The model assumes all features are independent of each other, i.e. probability of two features values occurring together (e.g. 'Guardian Mother' and 'Male Sex') is same as product of probabilities of the feature values occurring independently, i.e. probability of 'Guardian Mother' x probability of 'Male Sex'
 
 </code></pre>
-<p>The first assumption only comes into picture for features which are not labels (ordered) or classifications themselves. Consider 'absences' which is a number greater than 0. To calculate probability (a), i.e. probability of a feature value given that the student passed, we first calculate the mean and variance of 'absences' feature for for all the students who Passed. Then we can find the conditional probability mentioned above by using the parameterized Normal distribution equation (or it can be looked up in z-tables).</p>
-<p>The second assumption can easily seen to be misleading: e.g. 'health' and 'absences' are likely not independent features. Practically, this means one of those features may affect the other. e.g. students with better health are likely to have fewer absences. However, despite this limitation, the model performs very well with real life data and is able to predict with high accuracy and precision.</p>
+<p>The first assumption only comes into picture for features which are not labels (ordered) or classifications themselves. Consider 'absences' which is a number greater than 0. To calculate probability of a particular number of absences, given that the student passed, we first calculate the mean and variance of 'absences' for all the students who passed. Then we can find the conditional probability mentioned above by using the parameterized normal distribution equation (or it can be looked up in z-tables).</p>
+<p>The second assumption can easily seen to be misleading: e.g. 'health' and 'absences' are likely not independent features. Practically, this means one of those features may affect the other. E.g. students with better health are likely to have fewer absences. However, despite this limitation, the model performs very well with real life data and is able to predict with high accuracy and precision.</p>
 <p><b> Since Gaussian NB is a non-parametric model, it can't be further fine tuned. To explore fine-tuning, we select a Linear SVC model. </b></p>
-<p>1) Reasonable Training and Prediction times: While SVCs are not as fast as Gaussian NBs and Decision Trees, due to small training set, these are not primary concerns.
-2) Very strong performance: Linear SVC has comparable performance to Gaussian NB prior to fine tuning. We expect it to outperform the Naive Bayes model post fine tuning.</p>
-<p>Prior to making a prediction, the Linear SVC model is trained as follows:
-To start, the model assigns a sign +/- to each of the two classes of data (Pass/Fail).</p>
-<p>The model uses training data to discover the hyper-plane which optimizes the trade-off between, a) Maximizing the distance between the closest data points belonging to the two classes (pass/fail) and, b) ensuring that all data points are correctly classified.</p>
-<p>Based on the vector w, normal to the hyper-plane, discovered from training data, the prediction of classification of un-seen data is simply sign of (dot product of w and x + b) where x is the unseen data and b is the parameter which determines the offset of the hyper-plane from origin (the offset is b/||w||).</p>
+<p>1) Reasonable Training and Prediction times: While SVCs are not as fast as Gaussian NBs and Decision Trees, due to small training set, these are not primary concerns.</p>
+<p>2) Very strong performance: Linear SVC has comparable performance to Gaussian NB prior to fine tuning. We expect it to outperform the Naive Bayes model post fine tuning.</p>
 <p>We can fine tune the model by setting the penalty for 'wrong classification' in training data by using parameter 'C'. We do so
 below using GridSearchCV to fine tune the model over 20 different values of C.</p>
 
