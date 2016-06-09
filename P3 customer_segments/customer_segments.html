@@ -2148,7 +2148,7 @@ YII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> Yes, pairs such as 'Grocery-Detergents_Paper' and 'Grocery-Milk' show some degree of correlation. Unfortunately, Fresh doesn't seem to be correlated to any of the other features (which seems to support the result of the regression).</p>
+<p><strong>Answer:</strong> Yes, pairs such as 'Grocery-Detergents_Paper' and 'Grocery-Milk' show some degree of correlation. Fresh doesn't seem to be correlated to any of the other features (which seems to support the result of the regression).</p>
 <p>The data is not normally distributed. All the data is positive and in most cases clustered near 0,0. An always-positive distribution with peak and tail (such as lognormal) may be a better fit for the data.</p>
 
 </div>
@@ -6062,7 +6062,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> Yes. There are multiple data points which are considered outliers for more than 1 feature. e.g. index 154 is considered an outlier for Deli, Milk and Grocery. We may want to remove this index if we think that it was mis-recorded. I am not removing this index because, although it it has the minimum value for Milk spend, the low but not minimum (or maximum) spend for other categories suggest that this is a legitimate datapoint. Further, I don't expect this data point to impact the overall analysis.</p>
+<p><strong>Answer:</strong> Yes. There are multiple data points which are considered outliers for more than 1 feature. e.g. index 154 is considered an outlier for Deli, Milk and Grocery. We may want to remove this index if we think that it was mis-recorded. I am not removing this index because, although it it has the minimum value for Milk spend, the low but not minimum (or maximum) spend for other categories suggest that this is a legitimate datapoint. Further, I don't expect this data point to impact the overall analysis due to large dataset size.</p>
 <p>I have chosen to remove 1 index: 75. This index has an extremely low value for Grocery (next lowest value is over 90x higher). Furthermore, it has the same extremely low value for Detergents_Paper which seems to suggest that this may have been entered in error.</p>
 
 </div>
