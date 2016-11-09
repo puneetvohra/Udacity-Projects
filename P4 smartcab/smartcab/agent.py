@@ -8,13 +8,13 @@ class LearningAgent(Agent):
 	""" An agent that learns to drive in the Smartcab world.
 		This is the object you will be modifying. """ 
 
-	def __init__(self, env, learning=True, epsilon=1.0, alpha=0.5):
+	def __init__(self, env, learning=True, epsilon=1.0, alpha=0.7):
 		super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
 		self.planner = RoutePlanner(self.env, self)  # Create a route planner
 		self.valid_actions = self.env.valid_actions  # The set of valid actions
 
 		# Set parameters of the learning agent
-		self.learning = learning # Whether the agent is expected to learn
+		self.learning = True # Whether the agent is expected to learn
 		self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
 		self.epsilon = epsilon   # Random exploration factor
 		self.alpha = alpha       # Learning factor
@@ -38,7 +38,7 @@ class LearningAgent(Agent):
 			self.epsilon = 0
 			self.alpha = 0
 		else:
-			self.epsilon = self.epsilon * 0.98	
+			self.epsilon = self.epsilon * 0.98
 		########### 
 		## TO DO ##
 		###########
@@ -57,10 +57,6 @@ class LearningAgent(Agent):
 		waypoint = self.planner.next_waypoint() # The next waypoint 
 		inputs = self.env.sense(self)           # Visual input - intersection light and traffic
 		deadline = self.env.get_deadline(self)  # Remaining deadline
-		input_vals = ['light', 'oncoming', 'left', 'right']
-		traffic = ''
-		for val in input_vals:
-			traffic = traffic + str(inputs[val])
 		########### 
 		## TO DO ##
 		###########
@@ -69,11 +65,11 @@ class LearningAgent(Agent):
 		#   If it is not, create a dictionary in the Q-table for the current 'state'
 		#   For each action, set the Q-value for the state-action pair to 0
 		
-		state = (waypoint, traffic)
+		state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
 		if state in self.Q.keys():
 			pass
 		else:
-			self.Q[state] = [0]*len(self.valid_actions)
+			self.Q[state] = dict(zip(self.valid_actions, [0]*len(self.valid_actions)))
 
 
 		return state
@@ -105,7 +101,7 @@ class LearningAgent(Agent):
 		if state in self.Q:
 			pass
 		else:
-			Q[state] = [0]*len(self.valid_actions)
+			Q[state] = dict(zip(self.valid_actions, [0]*len(self.valid_actions)))
 		return
 
 
@@ -122,8 +118,7 @@ class LearningAgent(Agent):
 			if random.random() < self.epsilon:
 				action = random.choice(self.valid_actions)
 			else:
-				m = self.get_maxQ(state)
-				action = self.valid_actions[[i for i, j in enumerate(self.Q[state]) if j == m][0]]
+				action = max(self.Q[state], key=self.Q[state].get)
 
 		########### 
 		## TO DO ##
@@ -145,8 +140,7 @@ class LearningAgent(Agent):
 		# When learning, implement the value iteration update rule
 		#   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
 		next_state = self.env.sense(self)
-		self.Q[state][self.valid_actions.index(action)] = (1- self.alpha)*self.Q[state][self.valid_actions.index(action)]\
-		+ self.alpha * (reward + 0)
+		self.Q[state][action] = (1- self.alpha)*self.Q[state][action] + self.alpha * (reward + 0)
 		return
 
 
@@ -204,7 +198,7 @@ def run():
 	# Flags:
 	#   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
 	#   n_test     - discrete number of testing trials to perform, default is 0
-	sim.run()
+	sim.run(n_test = 10)
 
 
 if __name__ == '__main__':
