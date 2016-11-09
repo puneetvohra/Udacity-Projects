@@ -18,8 +18,7 @@ class LearningAgent(Agent):
 		self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
 		self.epsilon = epsilon   # Random exploration factor
 		self.alpha = alpha       # Learning factor
-		self.gamma = 0.5
-
+		
 		###########
 		## TO DO ##
 		###########
