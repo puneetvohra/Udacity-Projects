@@ -4,6 +4,9 @@ import pandas as pd
 
 def preprocess_features(X_train, X_test,col_list):
 	'''
+	Replaces missing values in both train and test data by median value of that feature in train data. Scales both train
+	and test to have 0 mean and unit variance. 
+	Returns scaled, imputed data.
 	'''
 	imp = preprocessing.Imputer(missing_values='NaN', strategy='median', axis=0)
 	imp.fit(X_train)

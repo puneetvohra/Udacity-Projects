@@ -6,12 +6,17 @@ import pandas as pd
 from wordcloud import WordCloud
 
 
-def create_test_train_data(clean_features, returns_data):
+def create_test_train_data(clean_features, returns_data, random_state = 42):
 	'''
+	Splits the clean data into 75/25 split of training and test data.
+	Adds two types of features: 
+	1) 30 features: word count of each of the top 30 words found in the Summary sector.
+	2) 11 features: Correlation of returns to sector returns 
+	Also returns a column list and index to ticker mapping dictionary to help recover original data later.
 	'''
 	X_all = clean_features.drop(['Sector'], axis =1)
 	y_all = clean_features[['Sector']]
-	X_train, X_test, y_train, y_test = train_test_split(X_all, y_all, random_state=42)
+	X_train, X_test, y_train, y_test = train_test_split(X_all, y_all, random_state=random_state)
 	sector_tickers = cc.get_sector_tickers(y_train)
 	sector_rtns = pd.DataFrame(columns = sector_tickers.keys(), index = returns_data.index)
 	for k,v in sector_tickers.iteritems():
@@ -52,7 +57,7 @@ def create_test_train_data(clean_features, returns_data):
 
 	for ticker in X_test.index:
 		for word in top_words:
-			X_train.loc[ticker, word + ' Count'] = str(X_train.loc[ticker,'Summary']).count(word)
+			X_test.loc[ticker, word + ' Count'] = str(X_test.loc[ticker,'Summary']).count(word)
 		if ticker in returns_data.columns:
 			sector_corrs = sector_rtns.corrwith(returns_data[ticker])
 			for k,v in sector_tickers.iteritems():

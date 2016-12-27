@@ -3,6 +3,7 @@ import numpy as np
 
 def convert_zillions_to_float(pd_ser):
 	'''
+	Replaces the strings 'Mil' or 'Bil' in data with appropriate number of 0's and converts string to floats.
 	'''
 	mil_idx = pd_ser.str.contains('Mil', na = False)
 	new_ser = pd_ser.str.replace('Mil','')
@@ -16,8 +17,10 @@ def convert_zillions_to_float(pd_ser):
 
 def clean_fund_data():
 	'''
+	Performs basic cleaning on downloaded data. 
+	Replaces the strings 'Mil' or 'Bil' in data with appropriate number of 0's and converts string to floats.
 	'''
-	fund_data =  pd.read_csv('fundamental_data.csv', encoding = 'utf-8')
+	fund_data =  pd.read_csv('data/fundamental_data.csv', encoding = 'utf-8')
 	fund_data = fund_data.set_index(['Unnamed: 0'])
 	fund_data.index.rename('Ticker', inplace = True)
 	fund_data['Net Income'] = convert_zillions_to_float(fund_data['Net Income'])
@@ -29,8 +32,9 @@ def clean_fund_data():
 
 def clean_returns_data():
 	'''
+	Removes infs and replaces with nans
 	'''
-	returns_data = pd.read_csv('returns_data.csv')
+	returns_data = pd.read_csv('data/returns_data.csv')
 	returns_data = returns_data.set_index(['Unnamed: 0'])
 	returns_data.index.rename('Date', inplace = True)
 	returns_data = returns_data.replace([np.inf, -np.inf], np.nan)

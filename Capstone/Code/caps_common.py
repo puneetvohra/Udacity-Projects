@@ -2,8 +2,9 @@ import pandas as pd
 
 def get_ticker_list():
 	'''
+	Reads the companylist.csv file (downloaded from NASDAQ website) and returns a list of ticker strings.
 	'''
-	df = pd.read_csv('companylist.csv')
+	df = pd.read_csv('data/companylist.csv')
 	df = df[(df['Sector'] != 'n/a') & (df['Industry'] != 'n/a')]
 	symbols = df['Symbol'].tolist()
 	raw_symbols = [x.strip() for x in symbols]
@@ -13,6 +14,8 @@ def get_ticker_list():
 
 def get_sector_tickers(fund_data):
 	'''
+	Inputs raw fundamental data and returns a dictionary with keys = sector name
+	and value = list of tickers belonging to that sector
 	'''
 	sector_tickers = {}
 	for sector in fund_data['Sector'].unique():

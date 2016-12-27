@@ -3,6 +3,7 @@ import numpy as np
 
 def create_features(clean_fund_data):
 	'''
+	Creates fundamental data features: 5 financial ratios. Returns data with these 5 columns added.
 	'''
 	unique_sectors = clean_fund_data['Sector'].unique()
 	clean_features = pd.get_dummies(clean_fund_data['Stock Type'])
