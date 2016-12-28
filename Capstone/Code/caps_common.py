@@ -30,3 +30,19 @@ def create_sector_returns(fund_data, returns_data):
 		sector_tickers = fund_data[fund_data['Sector'] == sector].index.tolist()
 		sector_rtns[sector] = returns_data[list(set(sector_tickers) & set(returns_data.columns))].mean(axis = 1)
 	return sector_rtns
+
+def calc_sector_precision(predictions, sector):
+	''' Given a predictions dataframe (with 'Predictions' and 'Actual' column), it calculates the precision of predictions
+		for that sector.
+	'''
+	true_positives = predictions[(predictions['Predictions'] == sector) & (predictions['Actual'] == sector)]
+	sector_preds = predictions[predictions['Predictions'] == sector]
+	return float(len(true_positives))/len(sector_preds)
+
+def calc_sector_recall(predictions, sector):
+	''' Given a predictions dataframe (with 'Predictions' and 'Actual' column), it calculates the recall of predictions
+		for that sector.
+	'''
+	true_positives = predictions[(predictions['Predictions'] == sector) & (predictions['Actual'] == sector)]
+	sector_act = predictions[predictions['Actual'] == sector]
+	return float(len(true_positives))/len(sector_act)
