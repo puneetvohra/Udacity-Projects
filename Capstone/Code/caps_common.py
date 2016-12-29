@@ -46,3 +46,30 @@ def calc_sector_recall(predictions, sector):
 	true_positives = predictions[(predictions['Predictions'] == sector) & (predictions['Actual'] == sector)]
 	sector_act = predictions[predictions['Actual'] == sector]
 	return float(len(true_positives))/len(sector_act)
+
+def create_sector_counts(clean_fund_data):
+	'''
+	Creates a csv with number of firms belonging to each sector
+	'''
+	sector_count = {}
+	for sector in clean_fund_data['Sector'].unique():
+		sector_data = clean_fund_data[clean_fund_data['Sector'] == sector]
+		sector_count[sector] = len(sector_data)
+	pd.DataFrame.from_dict(sector_count, orient = 'index').to_csv('data/sector_counts.csv')
+	return
+
+def create_sector_prec_recall(prediction_df):
+	'''
+	Creates a csv with precision and recall for each sector
+	'''
+	sector_prec = {}
+	sector_recall = {}
+	for sector in prediction_df['Actual'].unique():
+		sector_prec[sector] = calc_sector_precision(prediction_df, sector)
+		sector_recall[sector] = calc_sector_recall(prediction_df, sector)
+	sector_prec_df = pd.DataFrame.from_dict(sector_prec,orient = 'index')
+	sector_recall_df = pd.DataFrame.from_dict(sector_recall,orient = 'index')
+	sector_prec_recall = pd.merge(sector_prec_df, sector_recall_df, left_index = True, right_index = True)
+	sector_prec_recall.columns = ['Precision','Recall']
+	sector_prec_recall.to_csv('data/prec_recall.csv')
+	return
